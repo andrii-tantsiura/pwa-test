@@ -10,7 +10,6 @@
     "@types/node": "^17.0.45",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
-    "gh-pages": "^6.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
@@ -33,7 +32,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start-build": "react-scripts build & serve -s build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "redeploy": "npm run build & gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -52,5 +55,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
   }
 }
