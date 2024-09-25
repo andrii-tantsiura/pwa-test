@@ -13,6 +13,8 @@ const VIBRATION_PATTERN = [
 
 const GOOGLE_QUERY_URL = "https://www.google.com/search?q=";
 
+const LOFI_CHANNEL_URL = "https://www.youtube.com/watch?v=jfKfPfyJRdk";
+
 function App() {
   const [coords, setCoords] = useState<GeolocationCoordinates | undefined>();
   const [locationSearchUrl, setLocationSearchUrl] = useState<
@@ -29,19 +31,27 @@ function App() {
     navigator.geolocation.getCurrentPosition(({ coords }) => setCoords(coords));
   }, []);
 
-  const handleShare = () => {
-    const sharedLocation = {
-      text: "Share my location",
-      title: "Share",
-      url: locationSearchUrl,
-    };
-
-    if (navigator.canShare(sharedLocation)) {
-      navigator.share(sharedLocation);
+  const shareData = (sharedData: ShareData) => {
+    if (navigator.canShare(sharedData)) {
+      navigator.share(sharedData);
     } else {
-      alert("Cannot share location");
+      alert("Cannot share data");
     }
   };
+
+  const handleShareLocation = () =>
+    shareData({
+      title: "Share location",
+      text: "Your location will be shared",
+      url: locationSearchUrl,
+    });
+
+  const handleYoutubeUrl = () =>
+    shareData({
+      title: "Share location",
+      text: "Your location will be shared",
+      url: LOFI_CHANNEL_URL,
+    });
 
   const handleCopy = () => {
     if (locationSearchUrl) {
@@ -72,6 +82,8 @@ function App() {
           <Button onClick={handleChangeBadgeNumber}>Set app badge 9</Button>
 
           <Button onClick={handleVibrate}>Vibrate SOS</Button>
+
+          <Button onClick={handleYoutubeUrl}>Share youtube channel</Button>
         </ButtonGroup>
 
         {coords && (
@@ -85,7 +97,7 @@ function App() {
                 Copy coordinates
               </Button>
 
-              <Button variant="primary" onClick={handleShare}>
+              <Button variant="primary" onClick={handleShareLocation}>
                 Share my coords
               </Button>
 
