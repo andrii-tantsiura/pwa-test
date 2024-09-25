@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Image from "react-bootstrap/Image";
 
 import logo from "./logo.svg";
+
 import "./App.css";
 
 const VIBRATION_PATTERN = [
   100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100,
 ];
+
+const GOOGLE_QUERY_URL = "https://www.google.com/search?q=";
 
 function App() {
   const [coords, setCoords] = useState<GeolocationCoordinates | undefined>();
@@ -18,15 +24,9 @@ function App() {
       name: "geolocation",
     });
 
-    if (permission.state === "granted") {
-      navigator.geolocation.getCurrentPosition(({ coords }) =>
-        setCoords(coords)
-      );
-    } else if (permission.state === "prompt") {
-      // showButtonToEnableLocalNews();
-    } else {
-      // alert("Location permissions denied");
-    }
+    console.log("location permission:", permission.state);
+
+    navigator.geolocation.getCurrentPosition(({ coords }) => setCoords(coords));
   }, []);
 
   const handleShare = () => {
@@ -45,7 +45,9 @@ function App() {
 
   const handleCopy = () => {
     if (locationSearchUrl) {
-      navigator.clipboard.writeText(locationSearchUrl);
+      navigator.clipboard.writeText(
+        `${coords?.latitude + ", " + coords?.longitude}`
+      );
     }
   };
 
@@ -55,20 +57,22 @@ function App() {
 
   useEffect(() => {
     setLocationSearchUrl(
-      `https://www.google.com/search?q=${coords?.latitude}+${coords?.longitude}`
+      `${GOOGLE_QUERY_URL}${coords?.latitude}+${coords?.longitude}`
     );
   }, [coords?.latitude, coords?.longitude]);
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <Image src={logo} className="App-logo" alt="logo" />
 
-        <button onClick={fetchCurrentPosition}>Get my location</button>
+        <ButtonGroup>
+          <Button onClick={fetchCurrentPosition}>Get my location</Button>
 
-        <button onClick={handleChangeBadgeNumber}>Set app badge 9</button>
+          <Button onClick={handleChangeBadgeNumber}>Set app badge 9</Button>
 
-        <button onClick={handleVibrate}>Vibrate SOS</button>
+          <Button onClick={handleVibrate}>Vibrate SOS</Button>
+        </ButtonGroup>
 
         {coords && (
           <>
@@ -76,18 +80,24 @@ function App() {
               My location: {coords.latitude}, {coords.longitude}
             </p>
 
-            <a
-              className="App-link"
-              href={locationSearchUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open Google Maps
-            </a>
+            <ButtonGroup>
+              <Button variant="primary" onClick={handleCopy}>
+                Copy coordinates
+              </Button>
 
-            <button onClick={handleShare}>Share my location</button>
+              <Button variant="primary" onClick={handleShare}>
+                Share my coords
+              </Button>
 
-            <button onClick={handleCopy}>Copy</button>
+              <Button
+                className="App-link"
+                href={locationSearchUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open Google Maps
+              </Button>
+            </ButtonGroup>
           </>
         )}
       </header>
