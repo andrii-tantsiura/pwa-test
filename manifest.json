@@ -57,9 +57,9 @@
   "background_color": "#ffffff",
   "shortcuts": [
     {
-      "name": "Do something",
-      "short_name": "Do",
-      "description": "Do something very interesting",
+      "name": "Home",
+      "short_name": "Open home",
+      "description": "Open home shortuct",
       "url": "/home",
       "icons": [
         {
@@ -71,10 +71,24 @@
       ]
     },
     {
-      "name": "Do another stuff",
-      "short_name": "Do stuff",
-      "description": "Do another interesting stuff",
-      "url": "/home2",
+      "name": "Users",
+      "short_name": "Open users",
+      "description": "Open users shortcut",
+      "url": "/users",
+      "icons": [
+        {
+          "src": "bell.jpg",
+          "sizes": "612x612",
+          "type": "image/jpg",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
+      "name": "About",
+      "short_name": "Open about",
+      "description": "Open about shortcut",
+      "url": "/about",
       "icons": [
         {
           "src": "bell.jpg",
