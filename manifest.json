@@ -36,6 +36,7 @@
       "label": "List of Awesome Resources available in Awesome App"
     }
   ],
+  "scope": "/app/",
   "start_url": ".",
   "display": "standalone",
   "orientation": "portrait",
