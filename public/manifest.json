@@ -1,6 +1,6 @@
 {
   "id": "test-pwa-react-app",
-  "short_name": "PWA",
+  "short_name": "Test App",
   "name": "Test PWA React App",
   "description": "Test PWA App developed using React and workbox",
   "icons": [
@@ -22,21 +22,35 @@
   ],
   "screenshots": [
     {
-      "src": "logo512.png",
-      "type": "image/png",
+      "src": "mob_screenshot_1.jpg",
+      "type": "image/pnjpgg",
       "sizes": "512x512",
       "form_factor": "narrow",
       "label": "Homescreen of Awesome App"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
+      "src": "mob_screenshot_2.jpg",
+      "type": "image/jpg",
       "sizes": "512x512",
+      "form_factor": "narrow",
+      "label": "List of Awesome Resources available in Awesome App"
+    },
+    {
+      "src": "web_screenshot_1.jpg",
+      "type": "image/jpg",
+      "sizes": "1920x1080",
+      "form_factor": "wide",
+      "label": "Homescreen of Awesome App"
+    },
+    {
+      "src": "web_screenshot_2.jpg",
+      "type": "image/jpg",
+      "sizes": "1920x1080",
       "form_factor": "wide",
       "label": "List of Awesome Resources available in Awesome App"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#ffffff",
@@ -45,8 +59,8 @@
     {
       "name": "Do something",
       "short_name": "Do",
-      "description": "Do something cool",
-      "url": "/play",
+      "description": "Do something very interesting",
+      "url": "/home",
       "icons": [
         {
           "src": "https://static.thenounproject.com/png/110164-200.png",
@@ -58,7 +72,7 @@
       "name": "Do another stuff",
       "short_name": "Do stuff",
       "description": "Do another interesting stuff",
-      "url": "/bell",
+      "url": "/home2",
       "icons": [
         {
           "src": "bell.jpg",
