@@ -50,7 +50,7 @@
       "label": "Second screenshot of Awesome App"
     }
   ],
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#ffffff",
@@ -64,7 +64,9 @@
       "icons": [
         {
           "src": "https://static.thenounproject.com/png/110164-200.png",
-          "sizes": "200x200"
+          "sizes": "200x200",
+          "type": "image/png",
+          "purpose": "any"
         }
       ]
     },
@@ -76,7 +78,9 @@
       "icons": [
         {
           "src": "bell.jpg",
-          "sizes": "612x612"
+          "sizes": "612x612",
+          "type": "image/jpg",
+          "purpose": "any"
         }
       ]
     }
