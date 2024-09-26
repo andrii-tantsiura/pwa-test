@@ -1,6 +1,7 @@
-import { Route, Routes } from "react-router-dom";
+import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 
 import { About } from "./Pages/About";
+import { Error } from "./Pages/Error";
 import { Home } from "./Pages/Home";
 import { Layout } from "./Pages/Layout";
 import { Page404 } from "./Pages/Page404";
@@ -10,16 +11,16 @@ import "./App.css";
 
 function App() {
   return (
-    <div className="App">
+    <HashRouter>
       <Routes>
-        <Route element={<Layout />}>
-          <Route index path="home" element={<Home />} />
-          <Route path="users" element={<Users />} />
-          <Route path="about" element={<About />} />
-          <Route path="*" element={<Page404 />} />
+        <Route path="/" element={<Layout />} errorElement={<Error />}>
+          <Route index element={<Home />} errorElement={<Error />} />
+          <Route path="users" element={<Users />} errorElement={<Error />} />
+          <Route path="about" element={<About />} errorElement={<Error />} />
+          <Route path="*" element={<Page404 />} errorElement={<Error />} />
         </Route>
       </Routes>
-    </div>
+    </HashRouter>
   );
 }
 
