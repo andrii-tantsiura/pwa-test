@@ -12,10 +12,11 @@ export const Layout = () => {
 
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">
-              Home123
+              Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/users">
-              Users
+
+            <Nav.Link as={Link} to="/daily-report">
+              Daily Report
             </Nav.Link>
             <Nav.Link as={Link} to="/about">
               About

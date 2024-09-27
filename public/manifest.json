@@ -71,20 +71,6 @@
       ]
     },
     {
-      "name": "Users",
-      "short_name": "Open users",
-      "description": "Open users shortcut",
-      "url": "/users",
-      "icons": [
-        {
-          "src": "bell.jpg",
-          "sizes": "612x612",
-          "type": "image/jpg",
-          "purpose": "any"
-        }
-      ]
-    },
-    {
       "name": "About",
       "short_name": "Open about",
       "description": "Open about shortcut",
