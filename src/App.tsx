@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 
-import { About } from "./Pages/About";
-import { Hospitalized } from "./Pages/Hospitalized";
-import { Error } from "./Pages/Error";
-import { Home } from "./Pages/Home";
-import { Layout } from "./Pages/Layout";
-import { Page404 } from "./Pages/Page404";
+import { About } from "./pages/About";
+import { Hospitalized } from "./pages/Hospitalized";
+import { Error } from "./pages/Error";
+import { Home } from "./pages/Home";
+import { Layout } from "./pages/Layout";
+import { Page404 } from "./pages/Page404";
 
 import "./App.css";
 
