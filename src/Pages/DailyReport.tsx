@@ -1,17 +1,64 @@
-import { ChangeEventHandler, useCallback, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { Form, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import * as XLSX from "xlsx";
 import { Sheet, WorkSheet } from "xlsx";
 
-import { REPORT_SHEET_NAME } from "../constants/dailyReport";
+import {
+  BATTALIONS_TO_TRACK,
+  DailyReportColumns,
+  HOSPITALIZATION_DAYS_TO_TRACK,
+  REPORT_SHEET_NAME,
+} from "../constants/dailyReport";
 import { Patient } from "../entities/patient";
 import ReportService from "../services/ReportService";
+import { convertFromExcelDate } from "../utils/xlsx";
 
 export const DailyReport = () => {
   const [sheet, setSheet] = useState<Sheet>();
   const [range, setRange] = useState<XLSX.Range>();
-  const [patients, setPatients] = useState<Patient[]>();
-  const [patientsToDisplay, setPatientsToDisplay] = useState<Patient[]>();
+
+  const [columns, setColumns] = useState<Patient[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
+
+  const [daysAgo, setDaysAgo] = useState<number>(HOSPITALIZATION_DAYS_TO_TRACK);
+  const [battalions, setBattalions] = useState<string[]>([]);
+
+  const [selectedBattalions, setSelectedBattalions] =
+    useState<string[]>(BATTALIONS_TO_TRACK);
+
+  const patientsToDisplay = useMemo(
+    () =>
+      ReportService.filterPatientsToTrack(
+        patients,
+        selectedBattalions,
+        daysAgo
+      ).map((pat) => ({
+        ...pat,
+        [DailyReportColumns.HOSPITALIZED_DATE]: convertFromExcelDate(
+          Number(pat[DailyReportColumns.HOSPITALIZED_DATE])
+        ),
+      })),
+    [daysAgo, patients, selectedBattalions]
+  );
+
+  const handleSelectedBattalionsChange = useCallback(
+    (battalions: string[]) => setSelectedBattalions(battalions),
+    []
+  );
+
+  const handleDaysAgoChange = useCallback(
+    ({ target }: ChangeEvent<HTMLInputElement>) =>
+      setDaysAgo(Number(target.value)),
+    []
+  );
 
   const handleLoadReport = useCallback(
     ({ target }: ProgressEvent<FileReader>) => {
@@ -53,31 +100,31 @@ export const DailyReport = () => {
     [handleLoadReport]
   );
 
-  const fetchPatients = useCallback(() => {
-    if (!range || !sheet) {
-      return;
-    }
+  useEffect(() => {
+    const fetchBattalions = () => {
+      if (sheet) {
+        setBattalions(ReportService.getBattalions(sheet));
+      }
+    };
 
-    const patients = ReportService.getHospitalizedPatients(sheet, range);
-
-    setPatients(patients);
-  }, [range, sheet]);
-
-  const filterPatientsToTrack = useCallback(() => {
-    if (patients) {
-      const filtered = ReportService.filterPatientsToTrack(patients);
-
-      setPatientsToDisplay(filtered);
-    }
-  }, [patients]);
+    fetchBattalions();
+  }, [sheet]);
 
   useEffect(() => {
+    const fetchPatients = () => {
+      if (!range || !sheet) {
+        return;
+      }
+
+      const [columnNames, ...patients] =
+        ReportService.getHospitalizedPatientsTable(sheet);
+
+      setColumns(Object.values(columnNames));
+      setPatients(patients);
+    };
+
     fetchPatients();
-  }, [fetchPatients]);
-
-  useEffect(() => {
-    filterPatientsToTrack();
-  }, [filterPatientsToTrack]);
+  }, [range, sheet]);
 
   return (
     <div>
@@ -85,18 +132,43 @@ export const DailyReport = () => {
 
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
 
+      <>
+        <Form.Label value={1}>Days ago: {daysAgo}</Form.Label>
+
+        <Form.Range
+          value={daysAgo}
+          min={0}
+          max={60}
+          onChange={handleDaysAgoChange}
+        />
+      </>
+
+      <ToggleButtonGroup
+        type="checkbox"
+        value={selectedBattalions}
+        onChange={handleSelectedBattalionsChange}
+      >
+        {battalions.map((battalion) => (
+          <ToggleButton key={battalion} id={battalion} value={battalion}>
+            {battalion}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+
       {patientsToDisplay && (
         <Table striped bordered hover variant="light">
-          <thead>
-            <tr>
-              {Object.keys(patientsToDisplay[0]).map((data, index) => (
-                <th key={index}>{data?.toString()}</th>
-              ))}
-            </tr>
-          </thead>
+          {columns && (
+            <thead>
+              <tr>
+                {columns.map((data, index) => (
+                  <th key={index}>{data?.toString()}</th>
+                ))}
+              </tr>
+            </thead>
+          )}
 
           <tbody>
-            {patientsToDisplay?.map((patient, index) => (
+            {patientsToDisplay.map((patient, index) => (
               <tr key={index}>
                 {Object.values(patient).map((data, index) => (
                   <td key={index}>{data?.toString()}</td>

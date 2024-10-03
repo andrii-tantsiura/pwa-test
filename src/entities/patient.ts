@@ -1,3 +1,3 @@
-export interface Patient {
-  [key: string]: any;
-}
+import { Row } from "./row";
+
+export interface Patient extends Row {}
