@@ -1,4 +1,4 @@
-export enum DailyReportColumns {
+export enum HospitalizedColumns {
   LAST_NAME_FIRST_NAME_PATRONYMIC = "Прізвище, ім'я, По-батькові(повністю)",
   RANK_POSITION = "Посада/Військове звання",
   BATTALION_UNIT = "Батальйон/Підрозділ",

@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import { About } from "./Pages/About";
-import { DailyReport } from "./Pages/DailyReport";
+import { Hospitalized } from "./Pages/Hospitalized";
 import { Error } from "./Pages/Error";
 import { Home } from "./Pages/Home";
 import { Layout } from "./Pages/Layout";
@@ -15,8 +15,8 @@ function App() {
       <Route path="/" element={<Layout />} errorElement={<Error />}>
         <Route index element={<Home />} errorElement={<Error />} />
         <Route
-          path="daily-report"
-          element={<DailyReport />}
+          path="hospitalized"
+          element={<Hospitalized />}
           errorElement={<Error />}
         />
         <Route path="about" element={<About />} errorElement={<Error />} />

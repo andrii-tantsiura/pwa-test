@@ -13,15 +13,15 @@ import { Sheet, WorkSheet } from "xlsx";
 
 import {
   BATTALIONS_TO_TRACK,
-  DailyReportColumns,
+  HospitalizedColumns,
   HOSPITALIZATION_DAYS_TO_TRACK,
   REPORT_SHEET_NAME,
-} from "../constants/dailyReport";
+} from "../constants/hospitalized";
 import { Patient } from "../entities/patient";
 import ReportService from "../services/ReportService";
 import { convertFromExcelDate } from "../utils/xlsx";
 
-export const DailyReport = () => {
+export const Hospitalized = () => {
   const [sheet, setSheet] = useState<Sheet>();
   const [range, setRange] = useState<XLSX.Range>();
 
@@ -42,8 +42,8 @@ export const DailyReport = () => {
         daysAgo
       ).map((pat) => ({
         ...pat,
-        [DailyReportColumns.HOSPITALIZED_DATE]: convertFromExcelDate(
-          Number(pat[DailyReportColumns.HOSPITALIZED_DATE])
+        [HospitalizedColumns.HOSPITALIZED_DATE]: convertFromExcelDate(
+          Number(pat[HospitalizedColumns.HOSPITALIZED_DATE])
         ),
       })),
     [daysAgo, patients, selectedBattalions]
@@ -128,12 +128,12 @@ export const DailyReport = () => {
 
   return (
     <div>
-      <h3>Daily Report</h3>
+      <h3>Госпіталізовані</h3>
 
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
 
       <>
-        <Form.Label value={1}>Days ago: {daysAgo}</Form.Label>
+        <Form.Label value={1}>Більше ніж {daysAgo} днів тому</Form.Label>
 
         <Form.Range
           value={daysAgo}

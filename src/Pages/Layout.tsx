@@ -15,8 +15,8 @@ export const Layout = () => {
               Home
             </Nav.Link>
 
-            <Nav.Link as={Link} to="/daily-report">
-              Daily Report
+            <Nav.Link as={Link} to="/hospitalized">
+              Госпіталізовані
             </Nav.Link>
             <Nav.Link as={Link} to="/about">
               About

@@ -1,6 +1,6 @@
 import { Sheet } from "xlsx";
 
-import { DailyReportColumns } from "../constants/dailyReport";
+import { HospitalizedColumns } from "../constants/hospitalized";
 import { Patient } from "../entities/patient";
 import {
   convertFromExcelDate,
@@ -24,8 +24,8 @@ class ReportService {
     daysAgo: number
   ): Patient[] {
     return patients.filter((patient) => {
-      const patientBattalion = patient[DailyReportColumns.BATTALION_UNIT];
-      const hospitalizedDate = patient[DailyReportColumns.HOSPITALIZED_DATE];
+      const patientBattalion = patient[HospitalizedColumns.BATTALION_UNIT];
+      const hospitalizedDate = patient[HospitalizedColumns.HOSPITALIZED_DATE];
 
       return (
         (!battalions.length || battalions.includes(patientBattalion)) &&
