@@ -1,6 +1,8 @@
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 
+import "./index.css";
+
 export const Layout = () => {
   return (
     <div>
@@ -35,7 +37,9 @@ export const Layout = () => {
         </Container>
       </Navbar>
 
-      <Outlet />
+      <div className="Page-Content">
+        <Outlet />
+      </div>
     </div>
   );
 };

@@ -16,10 +16,12 @@ import {
   HospitalizedColumns,
   HOSPITALIZATION_DAYS_TO_TRACK,
   REPORT_SHEET_NAME,
-} from "../constants/hospitalized";
-import { Patient } from "../entities/patient";
-import ReportService from "../services/ReportService";
-import { convertFromExcelDate } from "../utils/xlsx";
+} from "../../constants/hospitalized";
+import { Patient } from "../../entities/patient";
+import ReportService from "../../services/ReportService";
+import { convertFromExcelDate } from "../../utils/xlsx";
+
+import "./index.css";
 
 export const Hospitalized = () => {
   const [sheet, setSheet] = useState<Sheet>();
@@ -132,51 +134,59 @@ export const Hospitalized = () => {
 
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
 
-      <>
-        <Form.Label value={1}>Більше ніж {daysAgo} днів тому</Form.Label>
+      {battalions.length > 0 && (
+        <div className="Panel">
+          <div>
+            <Form.Label>Більше ніж {daysAgo} днів тому</Form.Label>
 
-        <Form.Range
-          value={daysAgo}
-          min={0}
-          max={60}
-          onChange={handleDaysAgoChange}
-        />
-      </>
+            <Form.Range
+              value={daysAgo}
+              min={0}
+              max={60}
+              onChange={handleDaysAgoChange}
+            />
+          </div>
 
-      <ToggleButtonGroup
-        type="checkbox"
-        value={selectedBattalions}
-        onChange={handleSelectedBattalionsChange}
-      >
-        {battalions.map((battalion) => (
-          <ToggleButton key={battalion} id={battalion} value={battalion}>
-            {battalion}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
-
-      {patientsToDisplay && (
-        <Table striped bordered hover variant="light">
-          {columns && (
-            <thead>
-              <tr>
-                {columns.map((data, index) => (
-                  <th key={index}>{data?.toString()}</th>
-                ))}
-              </tr>
-            </thead>
-          )}
-
-          <tbody>
-            {patientsToDisplay.map((patient, index) => (
-              <tr key={index}>
-                {Object.values(patient).map((data, index) => (
-                  <td key={index}>{data?.toString()}</td>
-                ))}
-              </tr>
+          <ToggleButtonGroup
+            type="checkbox"
+            value={selectedBattalions}
+            onChange={handleSelectedBattalionsChange}
+          >
+            {battalions.map((battalion) => (
+              <ToggleButton key={battalion} id={battalion} value={battalion}>
+                {battalion}
+              </ToggleButton>
             ))}
-          </tbody>
-        </Table>
+          </ToggleButtonGroup>
+        </div>
+      )}
+
+      {patientsToDisplay.length > 0 && (
+        <>
+          <p>Знайдено: {patientsToDisplay.length}</p>
+
+          <Table striped bordered hover variant="light">
+            {columns && (
+              <thead>
+                <tr>
+                  {columns.map((data, index) => (
+                    <th key={index}>{data?.toString()}</th>
+                  ))}
+                </tr>
+              </thead>
+            )}
+
+            <tbody>
+              {patientsToDisplay.map((patient, index) => (
+                <tr key={index}>
+                  {Object.values(patient).map((data, index) => (
+                    <td key={index}>{data?.toString()}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
       )}
     </div>
   );

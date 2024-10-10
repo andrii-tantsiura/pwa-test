@@ -1,0 +1,5 @@
+.Panel {
+  display: flex;
+  padding: 8px 0;
+  column-gap: 16px;
+}
