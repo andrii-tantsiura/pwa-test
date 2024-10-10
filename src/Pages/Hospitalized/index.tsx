@@ -132,7 +132,13 @@ export const Hospitalized = () => {
     <div>
       <h3>Госпіталізовані</h3>
 
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+      <Form.Group controlId="formFile" className="mb-3">
+        <Form.Control
+          type="file"
+          accept=".xlsx, .xls"
+          onChange={handleFileUpload}
+        />
+      </Form.Group>
 
       {battalions.length > 0 && (
         <div className="Panel">
@@ -142,7 +148,7 @@ export const Hospitalized = () => {
             <Form.Range
               value={daysAgo}
               min={0}
-              max={60}
+              max={120}
               onChange={handleDaysAgoChange}
             />
           </div>
