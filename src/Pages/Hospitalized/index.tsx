@@ -7,14 +7,14 @@ import {
   useState,
 } from "react";
 import { Form, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
-import Table from "react-bootstrap/Table";
 import * as XLSX from "xlsx";
 import { Sheet, WorkSheet } from "xlsx";
 
+import { CustomTable } from "../../components/CustomTable";
 import {
   BATTALIONS_TO_TRACK,
-  HospitalizedColumns,
   HOSPITALIZATION_DAYS_TO_TRACK,
+  HospitalizedColumns,
   REPORT_SHEET_NAME,
 } from "../../constants/hospitalized";
 import { Patient } from "../../entities/patient";
@@ -27,8 +27,11 @@ export const Hospitalized = () => {
   const [sheet, setSheet] = useState<Sheet>();
   const [range, setRange] = useState<XLSX.Range>();
 
-  const [columns, setColumns] = useState<Patient[]>([]);
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [hospitalizedColumns, setHospitalizedColumns] = useState<Patient[]>([]);
+  const [hospitalized, setHospitalized] = useState<Patient[]>([]);
+
+  const [outpatient, setOutpatients] = useState<Patient[]>([]);
+  const [outpatientColumns, setOutpatientsColumns] = useState<Patient[]>([]);
 
   const [daysAgo, setDaysAgo] = useState<number>(HOSPITALIZATION_DAYS_TO_TRACK);
   const [battalions, setBattalions] = useState<string[]>([]);
@@ -39,16 +42,16 @@ export const Hospitalized = () => {
   const patientsToDisplay = useMemo(
     () =>
       ReportService.filterPatientsToTrack(
-        patients,
+        hospitalized,
         selectedBattalions,
         daysAgo
-      ).map((pat) => ({
-        ...pat,
+      ).map((patient) => ({
+        ...patient,
         [HospitalizedColumns.HOSPITALIZED_DATE]: convertFromExcelDate(
-          Number(pat[HospitalizedColumns.HOSPITALIZED_DATE])
+          Number(patient[HospitalizedColumns.HOSPITALIZED_DATE])
         ),
       })),
-    [daysAgo, patients, selectedBattalions]
+    [daysAgo, hospitalized, selectedBattalions]
   );
 
   const handleSelectedBattalionsChange = useCallback(
@@ -121,11 +124,27 @@ export const Hospitalized = () => {
       const [columnNames, ...patients] =
         ReportService.getHospitalizedPatientsTable(sheet);
 
-      setColumns(Object.values(columnNames));
-      setPatients(patients);
+      setHospitalizedColumns(Object.values(columnNames));
+      setHospitalized(patients);
     };
 
     fetchPatients();
+  }, [range, sheet]);
+
+  useEffect(() => {
+    const fetchOutpatients = () => {
+      if (!range || !sheet) {
+        return;
+      }
+
+      const [columnNames, ...patients] =
+        ReportService.getOutpatientsTable(sheet);
+
+      setOutpatientsColumns(Object.values(columnNames));
+      setOutpatients(patients);
+    };
+
+    fetchOutpatients();
   }, [range, sheet]);
 
   return (
@@ -167,33 +186,17 @@ export const Hospitalized = () => {
         </div>
       )}
 
-      {patientsToDisplay.length > 0 && (
-        <>
-          <p>Знайдено: {patientsToDisplay.length}</p>
+      <CustomTable
+        title="Госпіталізовані"
+        columns={hospitalizedColumns}
+        items={patientsToDisplay}
+      />
 
-          <Table striped bordered hover variant="light">
-            {columns && (
-              <thead>
-                <tr>
-                  {columns.map((data, index) => (
-                    <th key={index}>{data?.toString()}</th>
-                  ))}
-                </tr>
-              </thead>
-            )}
-
-            <tbody>
-              {patientsToDisplay.map((patient, index) => (
-                <tr key={index}>
-                  {Object.values(patient).map((data, index) => (
-                    <td key={index}>{data?.toString()}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </>
-      )}
+      <CustomTable
+        title="Амбулаторні"
+        columns={outpatientColumns}
+        items={outpatient}
+      />
     </div>
   );
 };

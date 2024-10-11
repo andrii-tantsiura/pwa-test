@@ -1,24 +1,47 @@
+import * as XLSX from "xlsx";
 import { Sheet } from "xlsx";
 
 import { HospitalizedColumns } from "../constants/hospitalized";
 import { Patient } from "../entities/patient";
+import { isEventEarlierThan } from "../utils/date";
 import {
   convertFromExcelDate,
+  findValueAddressInRow,
   readRangeFromStrAsArray as readArrayFromSheet,
   readTableFromSheet,
 } from "../utils/xlsx";
-import { isEventEarlierThan } from "../utils/date";
 
 class ReportService {
-  getBattalions(sheet: Sheet) {
+  public getBattalions(sheet: Sheet) {
     return readArrayFromSheet(sheet, "B8:B17");
   }
 
-  getHospitalizedPatientsTable(sheet: Sheet): any[] {
+  public getHospitalizedPatientsTable(sheet: Sheet): any[] {
     return readTableFromSheet(sheet, "A22", "N22");
   }
 
-  filterPatientsToTrack(
+  public getOutpatientsTable(sheet: Sheet): any[] {
+    const tableName = "Амбулаторні";
+
+    const foundAddress = findValueAddressInRow(
+      tableName,
+      XLSX.utils.decode_cell("C22"),
+      sheet
+    );
+
+    if (!foundAddress) {
+      throw new Error(`Таблицю ${tableName} не знайдено`);
+    }
+
+    const recordsAddress = XLSX.utils.encode_cell({
+      r: foundAddress.r + 1,
+      c: foundAddress.c - 2,
+    });
+
+    return readTableFromSheet(sheet, recordsAddress, "N22");
+  }
+
+  public filterPatientsToTrack(
     patients: Patient[],
     battalions: string[],
     daysAgo: number

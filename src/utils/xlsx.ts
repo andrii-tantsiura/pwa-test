@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import { Sheet, utils, Range } from "xlsx";
+import { Sheet, utils, Range, CellAddress } from "xlsx";
 
 const EXCEL_BASE_DATE = new Date(1900, 0, 1);
 
@@ -72,4 +72,22 @@ export const readTableFromSheet = (
   }
 
   return entities;
+};
+
+export const findValueAddressInRow = (
+  target: any,
+  startAddress: CellAddress,
+  sheet: Sheet
+): CellAddress | null => {
+  const data: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+  for (let row = startAddress.r; row < data.length; row++) {
+    const value = data[row][startAddress.c];
+
+    if (value === target) {
+      return { c: startAddress.c, r: row };
+    }
+  }
+
+  return null;
 };
