@@ -17,7 +17,7 @@ class ReportService {
   }
 
   public getHospitalizedPatientsTable(sheet: Sheet): any[] {
-    return readTableFromSheet(sheet, "A22", "N22");
+    return readTableFromSheet(sheet, "A23", "N23");
   }
 
   public getOutpatientsTable(sheet: Sheet): any[] {

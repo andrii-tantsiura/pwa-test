@@ -18,9 +18,9 @@ export const REPORT_SHEET_NAME = "рапорт";
 
 export const BATTALIONS_TO_TRACK = [
   "Управління",
-  "Рота забезпечення",
-  "Медичний пункт",
-  "Взвод звязку",
+  "РМТЗ",
+  "Медична рота",
+  "Взвод зв'язку",
 ];
 
 export const HOSPITALIZATION_DAYS_TO_TRACK = 21;

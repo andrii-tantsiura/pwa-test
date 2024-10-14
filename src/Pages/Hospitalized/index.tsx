@@ -6,10 +6,11 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Form, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import * as XLSX from "xlsx";
 import { Sheet, WorkSheet } from "xlsx";
 
+import { CheckboxGroup, IOption } from "../../components/CheckboxGroup";
 import { CustomTable } from "../../components/CustomTable";
 import {
   BATTALIONS_TO_TRACK,
@@ -34,16 +35,14 @@ export const Hospitalized = () => {
   const [outpatientColumns, setOutpatientsColumns] = useState<Patient[]>([]);
 
   const [daysAgo, setDaysAgo] = useState<number>(HOSPITALIZATION_DAYS_TO_TRACK);
-  const [battalions, setBattalions] = useState<string[]>([]);
 
-  const [selectedBattalions, setSelectedBattalions] =
-    useState<string[]>(BATTALIONS_TO_TRACK);
+  const [battalions, setBattalions] = useState<IOption[]>([]);
 
   const patientsToDisplay = useMemo(
     () =>
       ReportService.filterPatientsToTrack(
         hospitalized,
-        selectedBattalions,
+        battalions.filter(({ checked }) => checked).map(({ id }) => id),
         daysAgo
       ).map((patient) => ({
         ...patient,
@@ -51,12 +50,7 @@ export const Hospitalized = () => {
           Number(patient[HospitalizedColumns.HOSPITALIZED_DATE])
         ),
       })),
-    [daysAgo, hospitalized, selectedBattalions]
-  );
-
-  const handleSelectedBattalionsChange = useCallback(
-    (battalions: string[]) => setSelectedBattalions(battalions),
-    []
+    [battalions, daysAgo, hospitalized]
   );
 
   const handleDaysAgoChange = useCallback(
@@ -108,7 +102,15 @@ export const Hospitalized = () => {
   useEffect(() => {
     const fetchBattalions = () => {
       if (sheet) {
-        setBattalions(ReportService.getBattalions(sheet));
+        const newBattalions = ReportService.getBattalions(sheet).map<IOption>(
+          (bat) => ({
+            label: bat,
+            id: bat,
+            checked: BATTALIONS_TO_TRACK.includes(bat),
+          })
+        );
+
+        setBattalions(newBattalions);
       }
     };
 
@@ -172,17 +174,11 @@ export const Hospitalized = () => {
             />
           </div>
 
-          <ToggleButtonGroup
-            type="checkbox"
-            value={selectedBattalions}
-            onChange={handleSelectedBattalionsChange}
-          >
-            {battalions.map((battalion) => (
-              <ToggleButton key={battalion} id={battalion} value={battalion}>
-                {battalion}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+          <CheckboxGroup
+            canCheckAll
+            items={battalions}
+            onChange={setBattalions}
+          />
         </div>
       )}
 
