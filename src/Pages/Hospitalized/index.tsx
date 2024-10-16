@@ -28,6 +28,8 @@ export const Hospitalized = () => {
   const [sheet, setSheet] = useState<Sheet>();
   const [range, setRange] = useState<XLSX.Range>();
 
+  const [error, setError] = useState<string>();
+
   const [hospitalizedColumns, setHospitalizedColumns] = useState<Patient[]>([]);
   const [hospitalized, setHospitalized] = useState<Patient[]>([]);
 
@@ -59,28 +61,32 @@ export const Hospitalized = () => {
     []
   );
 
+  const initializeReport = (workbook: XLSX.WorkBook) => {
+    const sheetName = workbook.SheetNames.find(
+      (name) => name === REPORT_SHEET_NAME
+    );
+
+    if (!sheetName) {
+      alert(`Sheet named "${REPORT_SHEET_NAME}" does not exist`);
+      return;
+    }
+
+    const sheet: WorkSheet = workbook.Sheets[sheetName];
+    setSheet(sheet);
+
+    const sheetRef = sheet["!ref"];
+
+    if (sheetRef) {
+      setRange(XLSX.utils.decode_range(sheetRef));
+    }
+  };
+
   const handleLoadReport = useCallback(
     ({ target }: ProgressEvent<FileReader>) => {
       const binaryString = target?.result as string;
       const workbook = XLSX.read(binaryString, { type: "binary" });
 
-      const sheetName = workbook.SheetNames.find(
-        (name) => name === REPORT_SHEET_NAME
-      );
-
-      if (!sheetName) {
-        alert(`Sheet named "${REPORT_SHEET_NAME}" does not exist`);
-        return;
-      }
-
-      const sheet: WorkSheet = workbook.Sheets[sheetName];
-      setSheet(sheet);
-
-      const sheetRef = sheet["!ref"];
-
-      if (sheetRef) {
-        setRange(XLSX.utils.decode_range(sheetRef));
-      }
+      initializeReport(workbook);
     },
     []
   );
@@ -149,6 +155,46 @@ export const Hospitalized = () => {
     fetchOutpatients();
   }, [range, sheet]);
 
+  useEffect(() => {
+    const handleProcessXlsx = async () => {
+      try {
+        const url = "http://10.10.26.169:3000/download-report";
+
+        const response = await fetch(url); // Путь к вашему API
+        console.log("🚀 ~ handleProcessXlsx ~ response:", response);
+
+        if (!response.ok) {
+          throw new Error("Ошибка при получении файла");
+        }
+
+        // Получаем Blob (файл)
+        const blob = await response.blob();
+        console.log("🚀 ~ handleProcessXlsx ~ blob:", blob);
+
+        // Преобразуем Blob в Data через FileReader
+        const fileReader = new FileReader();
+
+        fileReader.onload = (e) => {
+          const arrayBuffer = e.target?.result;
+          console.log("🚀 ~ handleProcessXlsx ~ arrayBuffer:", arrayBuffer);
+
+          // Используем XLSX для обработки ArrayBuffer
+          const workbook = XLSX.read(arrayBuffer, { type: "string" });
+
+          initializeReport(workbook);
+        };
+
+        // Читаем содержимое Blob как ArrayBuffer
+        fileReader.readAsArrayBuffer(blob);
+      } catch (error) {
+        setError(String(error));
+        console.error("Ошибка обработки файла XLSX:", error);
+      }
+    };
+
+    handleProcessXlsx();
+  }, []);
+
   return (
     <div>
       <h3>Госпіталізовані</h3>
@@ -181,6 +227,8 @@ export const Hospitalized = () => {
           />
         </div>
       )}
+
+      {error && <p>{error}</p>}
 
       <CustomTable
         title="Госпіталізовані"
